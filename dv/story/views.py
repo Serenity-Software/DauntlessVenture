@@ -1,6 +1,9 @@
 """
-Views for story
+Views for story.
 """
 from django.shortcuts import render
 
-# Create your views here.
+
+def index(request):
+    """Story list."""
+    return render(request, 'story/index.html', {})
