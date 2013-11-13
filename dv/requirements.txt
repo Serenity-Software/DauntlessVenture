@@ -1,0 +1,12 @@
+Baker==1.3
+Django==1.6
+astroid==1.0.1
+colorama==0.2.7
+distribute==0.6.27
+jsonfield==0.9.19
+logilab-common==0.60.0
+pep8==1.4.6
+psycopg2==2.4.5
+pylint==1.0.0
+radon==0.4.3
+wsgiref==0.1.2

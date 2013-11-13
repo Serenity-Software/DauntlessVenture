@@ -1,9 +1,12 @@
+"""
+URL management.
+"""
 from django.conf.urls import patterns, include, url
 
 from django.contrib import admin
 admin.autodiscover()
 
-urlpatterns = patterns(
+urlpatterns = patterns(  # pylint: disable=invalid-name
     '',
     # Examples:
     # url(r'^$', 'dv.views.home', name='home'),
