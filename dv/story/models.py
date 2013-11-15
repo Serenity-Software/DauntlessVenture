@@ -2,9 +2,12 @@
 
 Since ultimately the purpose of this system is to tell a story, we adopted
 film-making terminology: program, season, episode, act, scene, beat.
+
+TODO: make the change_date fields update on record change
 """
 from django.contrib import auth
 from django.db import models
+from django.utils import timezone
 from jsonfield import JSONField
 
 
@@ -17,6 +20,12 @@ class Program(models.Model):
     """
     creator_user = models.ForeignKey(auth.models.User)
     title = models.CharField(max_length=128)
+    description = models.TextField()
+    create_date = models.DateTimeField(default=timezone.now)
+    change_date = models.DateTimeField(default=timezone.now)
+
+    def __unicode__(self):
+        return unicode(self.title)
 
 
 class Season(models.Model):
@@ -26,12 +35,18 @@ class Season(models.Model):
 
     Attributes:
     """
-    series = models.ForeignKey(Program)
+    program = models.ForeignKey(Program)
     number = models.IntegerField()
+    description = models.TextField()
+    create_date = models.DateTimeField(default=timezone.now)
+    change_date = models.DateTimeField(default=timezone.now)
 
     # TODO: This should be a property-y method, whatever those are called.
     # I think you can do it via decorators.
     #def episode_count:
+
+    def __unicode__(self):
+        return unicode(self.number)
 
 
 class Episode(models.Model):
@@ -42,8 +57,14 @@ class Episode(models.Model):
     Attributes:
     """
     season = models.ForeignKey(Season)
-    title = models.CharField(max_length=128)
     number = models.IntegerField()
+    title = models.CharField(max_length=128)
+    description = models.TextField()
+    create_date = models.DateTimeField(default=timezone.now)
+    change_date = models.DateTimeField(default=timezone.now)
+
+    def __unicode__(self):
+        return unicode(self.title)
 
 
 class Act(models.Model):
@@ -55,6 +76,12 @@ class Act(models.Model):
     """
     episode = models.ForeignKey(Episode)
     number = models.IntegerField()
+    description = models.TextField()
+    create_date = models.DateTimeField(default=timezone.now)
+    change_date = models.DateTimeField(default=timezone.now)
+
+    def __unicode__(self):
+        return unicode(self.number)
 
 
 class Scene(models.Model):
@@ -66,6 +93,12 @@ class Scene(models.Model):
     """
     act = models.ForeignKey(Act)
     number = models.IntegerField()
+    description = models.TextField()
+    create_date = models.DateTimeField(default=timezone.now)
+    change_date = models.DateTimeField(default=timezone.now)
+
+    def __unicode__(self):
+        return unicode(self.number)
 
 
 class Component(models.Model):
@@ -75,16 +108,12 @@ class Component(models.Model):
     that the user interacts with.
 
     Attributes:
+        name:
+        class_name:
         property_list: a dict containing the properties.
     """
     name = models.CharField(max_length=32)
     class_name = models.CharField(max_length=128)
-    # TODO: this is basically a dict, but can't be stored in the DB this way.
-    # What's the proper Djangoesque approach?
-    # I think the actual class (as defined by class_name) should define
-    # this data.  Maybe we don't need this field at all, since we can just
-    # validate the class itself?
-    property_list = JSONField()
 
 
 class Beat(models.Model):
@@ -97,7 +126,11 @@ class Beat(models.Model):
     """
     scene = models.ForeignKey(Scene)
     component = models.ForeignKey(Component)
-    component_properties = JSONField(validators=[Beat.validate])
+    name = models.CharField(max_length=128)
+    description = models.TextField()
+    component_properties = JSONField()
+    create_date = models.DateTimeField(default=timezone.now)
+    change_date = models.DateTimeField(default=timezone.now)
 
     #TODO: implement this; there's probably a correct djangoesque way to do it.
     def validate(self):
@@ -106,3 +139,11 @@ class Beat(models.Model):
         Ensures the component properties match the component definition.
         """
         pass
+
+
+class InputComponent(Component):
+    """Component to handle input of any type.
+
+    Attributes:
+    """
+    name = ''
